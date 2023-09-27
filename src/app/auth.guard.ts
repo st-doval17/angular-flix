@@ -1,21 +1,31 @@
 import { Injectable } from '@angular/core';
 import { CanActivate, Router } from '@angular/router';
 
+/**
+ * A guard service to protect routes that require authentication.
+ */
 @Injectable({
   providedIn: 'root',
 })
 export class AuthGuard implements CanActivate {
+  /**
+   * Creates an instance of AuthGuard.
+   *
+   * @param router - Service for navigating between views in the application.
+   */
   constructor(private router: Router) {}
 
+  /**
+   * Checks whether the user is authenticated and allowed to access the route.
+   *
+   * @returns True if user data exists in local storage (authenticated), otherwise, redirects to the login page and returns false.
+   */
   canActivate(): boolean {
-    // Check if user data exists in local storage
     const userData = localStorage.getItem('user');
 
     if (userData) {
-      // User data exists, allow access
       return true;
     } else {
-      // User data doesn't exist, redirect to login page
       this.router.navigate(['/login']);
       return false;
     }

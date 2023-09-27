@@ -26,6 +26,9 @@ import { MovieDetailsDialogComponent } from './movie-details-dialog/movie-detail
 import { GenreModalComponent } from './genre-modal/genre-modal.component';
 import { DirectorModalComponent } from './director-modal/director-modal.component';
 
+/**
+ * Defines the root module of the Angular application.
+ */
 const appRoutes: Routes = [
   { path: 'welcome', component: WelcomePageComponent },
   { path: 'movies', component: MovieCardComponent },

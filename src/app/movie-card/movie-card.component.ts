@@ -7,14 +7,28 @@ import { GenreModalComponent } from '../genre-modal/genre-modal.component';
 import { DirectorModalComponent } from '../director-modal/director-modal.component';
 import { Router } from '@angular/router';
 
+/**
+ * Component for displaying movie cards and managing user interactions with movies.
+ */
 @Component({
   selector: 'app-movie-card',
   templateUrl: './movie-card.component.html',
   styleUrls: ['./movie-card.component.scss'],
 })
 export class MovieCardComponent implements OnInit {
+  /**
+   * Input data for the component, typically containing user information.
+   */
   @Input() userData: any;
+
+  /**
+   * An array of movie objects to display.
+   */
   movies: any[] = [];
+
+  /**
+   * A map to track whether each movie is in the user's favorites.
+   */
   favoritesMap: { [movieId: string]: boolean } = {};
 
   constructor(
@@ -29,6 +43,9 @@ export class MovieCardComponent implements OnInit {
     this.loadUserFavorites();
   }
 
+  /**
+   * Fetches the list of movies from the API.
+   */
   getMovies(): void {
     this.fetchApiData.getAllMovies().subscribe((resp: any) => {
       this.movies = resp;
@@ -37,6 +54,10 @@ export class MovieCardComponent implements OnInit {
     });
   }
 
+  /**
+   * Opens a dialog to display movie details.
+   * @param movie - The movie object to display details for.
+   */
   openMovieDetailsDialog(movie: any): void {
     const dialogRef = this.dialog.open(MovieDetailsDialogComponent, {
       width: '800px',
@@ -48,6 +69,10 @@ export class MovieCardComponent implements OnInit {
     });
   }
 
+  /**
+   * Opens a modal dialog to display genre information.
+   * @param movie - The movie object containing genre information.
+   */
   openGenreModal(movie: any): void {
     const dialogRef = this.dialog.open(GenreModalComponent, {
       width: '600px',
@@ -59,6 +84,10 @@ export class MovieCardComponent implements OnInit {
     });
   }
 
+  /**
+   * Opens a modal dialog to display director information.
+   * @param movie - The movie object containing director information.
+   */
   openDirectorModal(movie: any): void {
     const dialogRef = this.dialog.open(DirectorModalComponent, {
       width: '800px',
@@ -70,6 +99,10 @@ export class MovieCardComponent implements OnInit {
     });
   }
 
+  /**
+   * Adds or removes a movie from the user's favorites.
+   * @param movieId - The ID of the movie to add or remove from favorites.
+   */
   addToFavorites(movieId: string): void {
     const userObject = JSON.parse(localStorage.getItem('user') || '{}');
     const username = userObject.Username;
@@ -82,10 +115,8 @@ export class MovieCardComponent implements OnInit {
 
     if (username && token) {
       if (this.favoritesMap[movieId]) {
-        // If the movie is already in favorites, remove it
         this.deleteFavoriteMovie(username, movieId);
       } else {
-        // If the movie is not in favorites, add it
         this.fetchApiData.addFavoriteMovie(username, movieId).subscribe(
           (response) => {
             console.log('Successfully added to favorites:', response);
@@ -108,17 +139,21 @@ export class MovieCardComponent implements OnInit {
     }
   }
 
+  /**
+   * Loads user's favorite movies and populates the favoritesMap.
+   */
   loadUserFavorites(): void {
     const userObject = JSON.parse(localStorage.getItem('user') || '{}');
     const favoriteMovies = userObject.FavoriteMovies || [];
 
-    // Populate favoritesMap based on stored favorites
     favoriteMovies.forEach((movieId: string) => {
       this.favoritesMap[movieId] = true;
     });
   }
 
-  // Save updated favorites to local storage
+  /**
+   * Saves updated favorites to local storage.
+   */
   saveUserFavorites(): void {
     const userObject = JSON.parse(localStorage.getItem('user') || '{}');
     userObject.FavoriteMovies = Object.keys(this.favoritesMap).filter(
@@ -127,18 +162,23 @@ export class MovieCardComponent implements OnInit {
     localStorage.setItem('user', JSON.stringify(userObject));
   }
 
+  /**
+   * Deletes a movie from the user's favorites.
+   * @param username - The username of the user.
+   * @param movieId - The ID of the movie to remove from favorites.
+   */
   deleteFavoriteMovie(username: string, movieId: string): void {
     console.log('Deleting movie:', movieId, 'for user:', username);
 
     this.fetchApiData.deleteFavoriteMovie(username, movieId).subscribe(
       (response) => {
         console.log('Successfully removed from favorites:', response);
-        // Update favoritesMap to remove the bookmark
+
         this.favoritesMap[movieId] = false;
         this.snackBar.open('Movie removed from favorites', 'OK', {
           duration: 2000,
         });
-        // Save the updated favorites to local storage
+
         this.saveUserFavorites();
       },
       (error) => {
@@ -150,7 +190,11 @@ export class MovieCardComponent implements OnInit {
     );
   }
 
-  // Helper function to check if the movie is already in favorites
+  /**
+   * Checks if a movie is already in the user's favorites.
+   * @param movieId - The ID of the movie to check.
+   * @returns True if the movie is in favorites, false otherwise.
+   */
   isMovieInFavorites(movieId: string): boolean {
     const userObject = JSON.parse(localStorage.getItem('user') || '{}');
     const favoriteMovies = userObject.FavoriteMovies || [];
@@ -158,6 +202,9 @@ export class MovieCardComponent implements OnInit {
     return favoriteMovies.includes(movieId);
   }
 
+  /**
+   * Logs the user out and navigates to the 'welcome' page.
+   */
   logout(): void {
     localStorage.removeItem('user');
     localStorage.clear();

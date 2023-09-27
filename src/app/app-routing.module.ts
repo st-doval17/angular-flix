@@ -6,6 +6,9 @@ import { UserProfileComponent } from './user-profile/user-profile.component';
 import { MovieCardComponent } from './movie-card/movie-card.component';
 import { AuthGuard } from './auth.guard';
 
+/**
+ * Defines the application routes and their corresponding components.
+ */
 const routes: Routes = [
   { path: 'genre/:genreName', component: GenreModalComponent },
   { path: 'director/:directorName', component: DirectorModalComponent },
@@ -14,7 +17,11 @@ const routes: Routes = [
     component: UserProfileComponent,
     canActivate: [AuthGuard],
   },
-  { path: 'movies', component: MovieCardComponent, canActivate: [AuthGuard] }, // Apply AuthGuard here
+  {
+    path: 'movies',
+    component: MovieCardComponent,
+    canActivate: [AuthGuard],
+  },
 ];
 
 @NgModule({

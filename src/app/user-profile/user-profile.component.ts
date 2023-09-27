@@ -4,17 +4,32 @@ import { UserRegistrationService } from '../fetch-api-data.service';
 import { Router } from '@angular/router';
 import { formatDate } from '@angular/common';
 
+/**
+ * Component for displaying and managing user profile information.
+ */
 @Component({
   selector: 'app-user-profile',
   templateUrl: './user-profile.component.html',
   styleUrls: ['./user-profile.component.scss'],
 })
 export class UserProfileComponent implements OnInit {
+  /**
+   * The user object containing user profile data.
+   */
   user: any = {};
-  /* favoriteMovies: any[] = []; */
 
+  /**
+   * Input data for the component, typically containing user information.
+   */
   @Input() userData: any = {};
 
+  /**
+   * Creates an instance of UserProfileComponent.
+   *
+   * @param fetchApiData - Service for making API calls related to user registration and authentication.
+   * @param snackBar - Service for displaying snackbar notifications.
+   * @param router - Service for navigating between views in the application.
+   */
   constructor(
     public fetchApiData: UserRegistrationService,
     public snackBar: MatSnackBar,
@@ -25,9 +40,11 @@ export class UserProfileComponent implements OnInit {
     const savedUser = localStorage.getItem('user');
     this.user = JSON.parse(savedUser || '');
     this.getUserData();
-    /* this.fetchFavoriteMovies(); */
   }
 
+  /**
+   * Retrieves user data and formats it for display.
+   */
   getUserData(): void {
     this.userData = {
       Username: this.user.Username,
@@ -36,17 +53,9 @@ export class UserProfileComponent implements OnInit {
     };
   }
 
-  /*  fetchFavoriteMovies(): void {
-    this.fetchApiData.getFavoriteMovies(this.user.Username).subscribe(
-      (resp: any) => {
-        this.favoriteMovies = resp;
-      },
-      (error) => {
-        console.error('Error fetching favorite movies:', error);
-      }
-    );
-  } */
-
+  /**
+   * Updates the user's profile information.
+   */
   updateUser(): void {
     const username = this.userData.Username;
 
@@ -64,6 +73,9 @@ export class UserProfileComponent implements OnInit {
     );
   }
 
+  /**
+   * Deletes the user's account.
+   */
   deleteUser(): void {
     this.fetchApiData.deleteUser(this.user.Username).subscribe(
       (response: any) => {
@@ -95,10 +107,16 @@ export class UserProfileComponent implements OnInit {
     );
   }
 
+  /**
+   * Navigates back to the movie listing page.
+   */
   returnToMovies(): void {
     this.router.navigate(['/movies']);
   }
 
+  /**
+   * Logs the user out and navigates to the 'welcome' page.
+   */
   logout(): void {
     localStorage.removeItem('user');
     localStorage.clear();
